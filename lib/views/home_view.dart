@@ -3,13 +3,15 @@ import 'package:provider/provider.dart';
 import '../controllers/config_controller.dart';
 import '../models/servico_model.dart';
 import '../services/pdf_service.dart';
+import 'cliente_list_view.dart';
+import 'cliente_form_view.dart';
+import 'cidade_cadastro_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Escutando as alterações do Controller
     final config = context.watch<ConfigController>();
 
     return Scaffold(
@@ -18,12 +20,53 @@ class HomeView extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
+      // Menu Lateral (Drawer) para navegação organizada
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text(
+                "Menu Orçamento Pro",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.people),
+              title: const Text("Meus Clientes"),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClienteListView())),
+            ),
+            ListTile(
+              leading: const Icon(Icons.person_add),
+              title: const Text("Novo Cliente"),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClienteFormView())),
+            ),
+            ListTile(
+              leading: const Icon(Icons.location_city),
+              title: const Text("Pré-Cadastro de Cidades"),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CidadeCadastroView())),
+            ),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Seção de Configuração de Visualização
+            // Seção de Status e Gráficos
+            const Text("Dashboard de Status", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            Container(
+              height: 150,
+              width: double.infinity,
+              decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
+              child: const Center(child: Text("Gráficos de Orçamentos (Em breve)")),
+            ),
+            const SizedBox(height: 20),
+
+            // Configuração da Super Função
             Card(
               child: SwitchListTile(
                 title: const Text("Ativar Super Funções"),
@@ -54,18 +97,19 @@ class HomeView extends StatelessWidget {
               }).toList(),
             ),
             
-            const SizedBox(height: 40),
+            const SizedBox(height: 30),
             
-            // Botão de Geração de Orçamento (Lógica Real)
+            // Botão de Geração de Orçamento
             SizedBox(
               width: double.infinity,
-              height: 50,
+              height: 55,
               child: ElevatedButton.icon(
                 icon: const Icon(Icons.picture_as_pdf),
-                label: const Text("GERAR ORÇAMENTO ATUAL"),
+                label: const Text("GERAR ORÇAMENTO RÁPIDO"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 onPressed: () async {
                   if (config.profissoes.isEmpty) {
@@ -75,14 +119,12 @@ class HomeView extends StatelessWidget {
                     return;
                   }
 
-                  // Criando um objeto de serviço real para o PDF
-                  // Futuramente estes dados virão do formulário de cadastro
                   final servicoAtual = Servico(
                     id: DateTime.now().toString(),
                     categoria: config.profissoes.first,
                     subcategoria: 'Serviço Geral',
                     nome: 'Execução de Obra',
-                    preco: 0.0, // Valor zerado para preenchimento manual ou vindo do DB
+                    preco: 0.0,
                     quantidade: 1,
                   );
 
@@ -94,7 +136,7 @@ class HomeView extends StatelessWidget {
 
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Orçamento gerado e salvo com sucesso!")),
+                      const SnackBar(content: Text("Orçamento gerado!")),
                     );
                   }
                 },
@@ -102,6 +144,14 @@ class HomeView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // Futura implementação: Fluxo completo de novo orçamento
+        },
+        label: const Text("Novo Orçamento"),
+        icon: const Icon(Icons.add),
+        backgroundColor: Colors.orangeAccent,
       ),
     );
   }
