@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import '../models/servico_model.dart';
@@ -16,7 +15,7 @@ class PdfService {
       pw.Page(
         build: (pw.Context context) {
           return pw.Column(
-            cross: pw.CrossAxisAlignment.start,
+            crossAxisAlignment: pw.CrossAxisAlignment.start, // Correção do parâmetro
             children: [
               pw.Header(level: 0, child: pw.Text("Orcamento Profissional")),
               pw.Text("Cliente: $nomeCliente"),
@@ -31,22 +30,12 @@ class PdfService {
                   ];
                 }).toList(),
               ),
-              pw.Spacer(),
-              pw.Divider(),
-              pw.Align(
-                alignment: pw.Alignment.centerRight,
-                child: pw.Text(
-                  "Total Geral: R\$ ${itens.fold(0.0, (sum, item) => sum + (item.preco * item.quantidade)).toStringAsFixed(2)}",
-                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                ),
-              ),
             ],
           );
         },
       ),
     );
 
-    // Salva o arquivo no diretório temporário do dispositivo
     final output = await getTemporaryDirectory();
     final file = File("${output.path}/orcamento_${DateTime.now().millisecondsSinceEpoch}.pdf");
     await file.writeAsBytes(await pdf.save());
