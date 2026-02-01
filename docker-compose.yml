@@ -1,6 +1,35 @@
-version: '3'
+version: '3.8'
 
 services:
+  # Banco de Dados dedicado para Orçamentos
+  db_orcamento:
+    image: postgres:15
+    container_name: db_orcamento_pro
+    restart: always
+    environment:
+      POSTGRES_USER: admin_orcamento
+      POSTGRES_PASSWORD: senha_orcamento_2026
+      POSTGRES_DB: db_orcamento_pro
+    volumes:
+      - pgdata_orcamento:/var/lib/postgresql/data
+    networks:
+      - net_orcamento
+
+  # API Backend (Python)
+  app_backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: app_orcamento_backend
+    restart: always
+    environment:
+      - DB_URI=postgresql://admin_orcamento:senha_orcamento_2026@db_orcamento:5432/db_orcamento_pro
+    networks:
+      - net_orcamento
+      - web
+    # O backend não precisa de Host externo agora, apenas o Flutter Web
+
+  # Frontend (Flutter Web)
   orcamento_web:
     image: nginx:alpine
     container_name: orcamento_pro_web
@@ -8,17 +37,20 @@ services:
     volumes:
       - ./build/web:/usr/share/nginx/html
     networks:
-      - traefik-public
+      - web
     labels:
       - "traefik.enable=true"
-      # Configuração do Subdomínio
+      - "traefik.docker.network=web"
       - "traefik.http.routers.orcamento_pro.rule=Host(`orcamentos.silveirasolutionsstudio.com.br`)"
-      # Entrypoints para HTTP e HTTPS
-      - "traefik.http.routers.orcamento_pro.entrypoints=web,websecure"
-      - "traefik.http.routers.orcamento_pro.tls.certresolver=letsencrypt"
-      # Porta interna do container Nginx
+      - "traefik.http.routers.orcamento_pro.entrypoints=websecure"
+      - "traefik.http.routers.orcamento_pro.tls.certresolver=myresolver" # Seguindo seu padrão 'myresolver'
       - "traefik.http.services.orcamento_pro.loadbalancer.server.port=80"
 
 networks:
-  traefik-public:
+  net_orcamento:
+    driver: bridge
+  web:
     external: true
+
+volumes:
+  pgdata_orcamento:
