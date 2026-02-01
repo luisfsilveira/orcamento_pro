@@ -4,8 +4,8 @@ import '../controllers/config_controller.dart';
 import '../models/servico_model.dart';
 import '../services/pdf_service.dart';
 import 'cliente_list_view.dart';
-import 'cliente_form_view.dart';
 import 'cidade_cadastro_view.dart';
+import 'prazo_config_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -37,14 +37,14 @@ class HomeView extends StatelessWidget {
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClienteListView())),
             ),
             ListTile(
-              leading: const Icon(Icons.person_add),
-              title: const Text("Novo Cliente"),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClienteFormView())),
+              leading: const Icon(Icons.location_city),
+              title: const Text("Pré-Cadastro: Cidades"),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CidadeCadastroView())),
             ),
             ListTile(
-              leading: const Icon(Icons.location_city),
-              title: const Text("Pré-Cadastro de Cidades"),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CidadeCadastroView())),
+              leading: const Icon(Icons.timer),
+              title: const Text("Pré-Cadastro: Prazos"),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PrazoConfigView())),
             ),
           ],
         ),

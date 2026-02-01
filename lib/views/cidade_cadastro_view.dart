@@ -44,10 +44,10 @@ class _CidadeCadastroViewState extends State<CidadeCadastroView> {
                 const SizedBox(width: 10),
                 Expanded(
                   flex: 1,
-                  child: DropdownButtonFormField<String>(
+                  child: DropdownButtonFormField<String?>(
                     value: _estadoSelecionado,
                     decoration: const InputDecoration(border: OutlineInputBorder()),
-                    items: _estados.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                    items: _estados.map((e) => DropdownMenuItem<String?>(value: e, child: Text(e))).toList(),
                     onChanged: (val) => setState(() => _estadoSelecionado = val!),
                   ),
                 ),

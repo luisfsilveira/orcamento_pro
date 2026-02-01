@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../shared/validators.dart';
 import '../database/db_helper.dart';
 
@@ -158,11 +157,12 @@ class _ClienteFormViewState extends State<ClienteFormView> {
               const SizedBox(height: 15),
               
               // Dropdown Dinâmico que consome do Banco de Dados
-              DropdownButtonFormField<int>(
+              // Dropdown Dinâmico restaurado corretamente
+              DropdownButtonFormField<int?>(
                 decoration: const InputDecoration(labelText: "Cidade / Região (Pré-cadastradas)", border: OutlineInputBorder()),
                 value: _cidadeSelecionadaId,
                 items: _cidadesDisponiveis.map((c) {
-                  return DropdownMenuItem<int>(
+                  return DropdownMenuItem<int?>(
                     value: c['id'],
                     child: Text("${c['nome']} - ${c['estado']}"),
                   );

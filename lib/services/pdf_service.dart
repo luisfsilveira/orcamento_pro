@@ -15,7 +15,7 @@ class PdfService {
       pw.Page(
         build: (pw.Context context) {
           return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start, // Correção do parâmetro
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Header(level: 0, child: pw.Text("Orcamento Profissional")),
               pw.Text("Cliente: $nomeCliente"),
