@@ -112,9 +112,17 @@ class _ClienteFormViewState extends State<ClienteFormView> {
                 decoration: InputDecoration(
                   labelText: isPessoaFisica ? "CPF" : "CNPJ",
                   border: const OutlineInputBorder(),
-                  errorText: documentoValido ? null : "Documento com formato inválido",
-                  errorStyle: const TextStyle(color: Colors.red),
-                  suffixIcon: Icon(Icons.warning, color: documentoValido ? Colors.transparent : Colors.red),
+                  // Lógica do alerta vermelho sem impedir o prosseguimento
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: documentoValido ? Colors.grey : Colors.red, width: 2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: documentoValido ? Colors.blue : Colors.red, width: 2),
+                  ),
+                  suffixIcon: Icon(
+                    documentoValido ? Icons.check_circle : Icons.error,
+                    color: documentoValido ? Colors.green : Colors.red,
+                  ),
                 ),
                 onChanged: _validarDocumento,
               ),

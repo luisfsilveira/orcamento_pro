@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  orcamento_web:
+    image: nginx:alpine
+    container_name: orcamento_pro_web
+    restart: always
+    volumes:
+      - ./build/web:/usr/share/nginx/html
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      # Configuração do Subdomínio
+      - "traefik.http.routers.orcamento_pro.rule=Host(`orcamentos.silveirasolutionsstudio.com.br`)"
+      # Entrypoints para HTTP e HTTPS
+      - "traefik.http.routers.orcamento_pro.entrypoints=web,websecure"
+      - "traefik.http.routers.orcamento_pro.tls.certresolver=letsencrypt"
+      # Porta interna do container Nginx
+      - "traefik.http.services.orcamento_pro.loadbalancer.server.port=80"
+
+networks:
+  traefik-public:
+    external: true
