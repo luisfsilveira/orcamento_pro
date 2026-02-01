@@ -20,7 +20,6 @@ class HomeView extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      // Menu Lateral (Drawer) para navegação organizada
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -55,7 +54,6 @@ class HomeView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Seção de Status e Gráficos
             const Text("Dashboard de Status", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             Container(
@@ -65,8 +63,6 @@ class HomeView extends StatelessWidget {
               child: const Center(child: Text("Gráficos de Orçamentos (Em breve)")),
             ),
             const SizedBox(height: 20),
-
-            // Configuração da Super Função
             Card(
               child: SwitchListTile(
                 title: const Text("Ativar Super Funções"),
@@ -76,14 +72,11 @@ class HomeView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            
             const Text(
               "Minhas Profissões Ativas:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            
-            // Seletor de Profissões Dinâmico
             Wrap(
               spacing: 8.0,
               children: CategoriaProfissional.values.map((cat) {
@@ -96,10 +89,7 @@ class HomeView extends StatelessWidget {
                 );
               }).toList(),
             ),
-            
             const SizedBox(height: 30),
-            
-            // Botão de Geração de Orçamento
             SizedBox(
               width: double.infinity,
               height: 55,
@@ -112,6 +102,7 @@ class HomeView extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 onPressed: () async {
+                  // VALIDAÇÃO RESTAURADA: Verifica se há profissões antes de prosseguir
                   if (config.profissoes.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Selecione ao menos uma profissão antes.")),
@@ -119,6 +110,7 @@ class HomeView extends StatelessWidget {
                     return;
                   }
 
+                  // OBJETO COMPLETO: Restaurado conforme sua lógica original
                   final servicoAtual = Servico(
                     id: DateTime.now().toString(),
                     categoria: config.profissoes.first,
@@ -134,6 +126,7 @@ class HomeView extends StatelessWidget {
                     isSuperFuncao: config.isSuperFuncao,
                   );
 
+                  // SEGURANÇA RESTAURADA: Verifica se o widget ainda está montado
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Orçamento gerado!")),

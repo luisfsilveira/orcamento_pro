@@ -14,27 +14,26 @@ class DbHelper {
   }
 
   Future<Database> _initDb() async {
-    // Alterado para orcamento_pro conforme sua orientação
     String path = join(await getDatabasesPath(), 'orcamento_pro.db');
     
     return await openDatabase(
       path, 
       version: 1, 
       onCreate: (db, version) async {
-        // Tabela de Clientes atualizada com campos PF/PJ e Endereço completo
+        // Tabela de Clientes completa (PF/PJ e Endereço)
         await db.execute('''
           CREATE TABLE clientes (
             id INTEGER PRIMARY KEY AUTOINCREMENT, 
             nome TEXT NOT NULL, 
-            tipo_pessoa TEXT, -- 'PF' ou 'PJ'
-            documento TEXT,   -- CPF ou CNPJ
+            tipo_pessoa TEXT, 
+            documento TEXT,   
             whatsapp TEXT, 
             email TEXT,
             cep TEXT,
             logradouro TEXT,
             numero TEXT,
             bairro TEXT,
-            cidade_id INTEGER, -- Chave estrangeira para a tabela cidades
+            cidade_id INTEGER, 
             observacoes TEXT,
             data_cadastro TEXT
           )
@@ -52,7 +51,7 @@ class DbHelper {
             FOREIGN KEY (cliente_id) REFERENCES clientes (id)
           )''');
 
-        // NOVA: Tabela de Cidades para o Pré-Cadastro
+        // Tabela de Cidades
         await db.execute('''
           CREATE TABLE cidades (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,12 +60,31 @@ class DbHelper {
             UNIQUE(nome, estado)
           )
         ''');
+
+        // INCLUSÃO: Tabela de Prazos Padrão
+        await db.execute('''
+          CREATE TABLE prazos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            descricao TEXT NOT NULL, 
+            dias INTEGER NOT NULL
+          )
+        ''');
       },
     );
   }
 
-  // --- MÉTODOS PARA CIDADES ---
+  // --- MÉTODOS PARA PRAZOS ---
+  Future<int> insertPrazo(String descricao, int dias) async {
+    final dbClient = await db;
+    return await dbClient.insert('prazos', {'descricao': descricao, 'dias': dias});
+  }
 
+  Future<List<Map<String, dynamic>>> getPrazos() async {
+    final dbClient = await db;
+    return await dbClient.query('prazos', orderBy: 'dias ASC');
+  }
+
+  // --- MÉTODOS PARA CIDADES ---
   Future<int> insertCidade(String nome, String estado) async {
     final dbClient = await db;
     return await dbClient.insert('cidades', {'nome': nome, 'estado': estado});
@@ -78,13 +96,12 @@ class DbHelper {
   }
 
   // --- MÉTODOS PARA CLIENTES ---
-
   Future<int> insertCliente(Map<String, dynamic> row) async {
     final dbClient = await db;
     return await dbClient.insert('clientes', row);
   }
 
-  // Inteligência de histórico do cliente (Mantida conforme sua versão)
+  // Inteligência de histórico mantida integralmente
   Future<Map<String, int>> getHistoricoCliente(int clienteId) async {
     final dbClient = await db;
     var res = await dbClient.rawQuery(
